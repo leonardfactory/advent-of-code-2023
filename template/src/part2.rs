@@ -6,7 +6,7 @@ pub mod tests {
 
     #[test]
     fn test_example() {
-        // include_str!("../test.txt");
+        let test = include_str!("../test.txt");
         // assert_eq!(1, 2);
     }
 }
