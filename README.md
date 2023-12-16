@@ -1,5 +1,6 @@
-# advent-of-code-2023
- Advent of Code 2023 
+# Advent of Code 2023 🎄
+ 
+![AoC 2023 AI Banner](./ai-banner.png)
 
 ## Running
 
