@@ -1,4 +1,4 @@
-use std::ops::Add;
+use std::ops::{Add, Sub};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Pos {
@@ -33,6 +33,17 @@ impl Add for Pos {
     }
 }
 
+impl Sub for Pos {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
+    }
+}
+
 impl Pos {
     pub const ZERO: Pos = Pos { x: 0, y: 0 };
 
@@ -45,6 +56,12 @@ impl Pos {
     pub const SW: Pos = Pos { x: -1, y: 1 };
     pub const S: Pos = Pos { x: 0, y: 1 };
     pub const SE: Pos = Pos { x: 1, y: 1 };
+
+    // Shortcuts
+    pub const UP: Pos = Self::N;
+    pub const DOWN: Pos = Self::S;
+    pub const LEFT: Pos = Self::W;
+    pub const RIGHT: Pos = Self::E;
 
     pub fn new<T: IntoPosValue>(x: T, y: T) -> Self {
         Self {

@@ -2,6 +2,7 @@ pub mod bounds;
 pub mod pos;
 
 pub use bounds::*;
+use colored::Colorize;
 pub use pos::*;
 
 use std::{collections::HashMap, fmt::Display, ops::Index};
@@ -10,7 +11,7 @@ pub type Neighbor<'a, T> = (Pos, &'a T);
 
 /// A trait for types that can be displayed as a tile on a map.
 pub trait TileDisplay {
-    fn map_print(&self) -> Box<dyn Display>;
+    fn map_print(&self, pos: Pos) -> Box<dyn Display>;
 }
 
 /// A generic map, usually parsed from an input file, composed of tiles.
@@ -63,22 +64,50 @@ impl<T> Map<T> {
             .filter_map(|p| self.get(p).map(|t| (p, t)))
             .collect()
     }
-}
 
-impl<T: TileDisplay> Map<T> {
-    pub fn print(&self) {
+    pub fn is_near_bounds(&self, pos: Pos) -> bool {
+        pos.x >= self.bounds.max.x
+            || pos.x <= self.bounds.min.x
+            || pos.y >= self.bounds.max.y
+            || pos.y <= self.bounds.min.y
+    }
+
+    pub fn neighbors(&self, pos: Pos) -> Vec<Neighbor<T>> {
+        pos.neighbors()
+            .into_iter()
+            .filter_map(|p| self.get(p).map(|t| (p, t)))
+            .collect()
+    }
+
+    pub fn print_with(&self, display_tile: impl Fn(&T, Pos) -> Box<dyn Display>) {
         println!("\nMap:");
         for y in self.bounds.min.y..=self.bounds.max.y {
             for x in self.bounds.min.x..=self.bounds.max.x {
                 let pos = Pos::new(x, y);
                 if let Some(tile) = self.get(pos) {
-                    print!("{}", tile.map_print());
+                    print!("{}", display_tile(tile, pos));
                 } else {
                     print!(".");
                 }
             }
             println!();
         }
+    }
+}
+
+impl<T: TileDisplay> Map<T> {
+    pub fn print_and_highlight(&self, highlight: Pos) {
+        self.print_with(|tile, pos| {
+            if pos == highlight {
+                Box::new("X".color("yellow"))
+            } else {
+                tile.map_print(pos)
+            }
+        })
+    }
+
+    pub fn print(&self) {
+        self.print_with(|tile, pos| tile.map_print(pos))
     }
 }
 
