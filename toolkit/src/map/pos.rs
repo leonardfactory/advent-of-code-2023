@@ -100,6 +100,20 @@ impl Pos {
             *self + Self::SE,
         ]
     }
+
+    pub fn add_y(&self, y: i32) -> Self {
+        Self {
+            x: self.x,
+            y: self.y + y,
+        }
+    }
+
+    pub fn add_x(&self, x: i32) -> Self {
+        Self {
+            x: self.x + x,
+            y: self.y,
+        }
+    }
 }
 
 #[cfg(test)]

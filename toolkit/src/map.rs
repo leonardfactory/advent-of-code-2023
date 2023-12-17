@@ -38,6 +38,13 @@ impl<T> Map<T> {
         self.bounds.min.y = self.tiles.keys().map(|p| p.y).min().unwrap_or(0);
     }
 
+    pub fn from_tiles(tiles: Vec<(Pos, T)>) -> Self {
+        let mut map = Self::new();
+        map.tiles = tiles.into_iter().collect();
+        map.update_bounds();
+        map
+    }
+
     pub fn parse(input: &str, mut parse_tile: impl FnMut(char, usize, usize) -> Option<T>) -> Self {
         let mut map = Self::new();
 
@@ -108,6 +115,20 @@ impl<T: TileDisplay> Map<T> {
 
     pub fn print(&self) {
         self.print_with(|tile, pos| tile.map_print(pos))
+    }
+
+    pub fn iter_column(&self, x: i32) -> impl Iterator<Item = (Pos, &T)> {
+        (self.bounds.min.y..=self.bounds.max.y).map(move |y| {
+            let pos = Pos::new(x, y);
+            (pos, self.get(pos).unwrap())
+        })
+    }
+
+    pub fn iter_row(&self, y: i32) -> impl Iterator<Item = (Pos, &T)> {
+        (self.bounds.min.x..=self.bounds.max.x).map(move |x| {
+            let pos = Pos::new(x, y);
+            (pos, self.get(pos).unwrap())
+        })
     }
 }
 
