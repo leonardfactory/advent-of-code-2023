@@ -17,7 +17,7 @@ pub trait TileDisplay {
 /// A generic map, usually parsed from an input file, composed of tiles.
 /// Each tile is stored in a HashMap, indexed by its position, in order
 /// to allow for fast lookup and virtually unlimited size.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Map<T> {
     pub tiles: HashMap<Pos, T>,
     pub bounds: Bounds,
@@ -73,6 +73,14 @@ impl<T> Map<T> {
         self.tiles.get(&pos)
     }
 
+    pub fn at(&self, x: i32, y: i32) -> &T {
+        self.tiles.get(&Pos::new(x, y)).unwrap()
+    }
+
+    pub fn set(&mut self, pos: Pos, tile: T) -> Option<T> {
+        self.tiles.insert(pos, tile)
+    }
+
     pub fn all_neighbors(&self, pos: Pos) -> Vec<Neighbor<T>> {
         pos.all_neighbors()
             .into_iter()
@@ -107,6 +115,10 @@ impl<T> Map<T> {
             }
             println!();
         }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (&Pos, &T)> {
+        self.tiles.iter()
     }
 
     pub fn iter_column(&self, x: i32) -> impl Iterator<Item = (Pos, &T)> {
