@@ -61,6 +61,14 @@ impl<T> Map<T> {
         map
     }
 
+    pub fn width(&self) -> i32 {
+        self.bounds.width()
+    }
+
+    pub fn height(&self) -> i32 {
+        self.bounds.height()
+    }
+
     pub fn get(&self, pos: Pos) -> Option<&T> {
         self.tiles.get(&pos)
     }
@@ -100,6 +108,20 @@ impl<T> Map<T> {
             println!();
         }
     }
+
+    pub fn iter_column(&self, x: i32) -> impl Iterator<Item = (Pos, &T)> {
+        (self.bounds.min.y..=self.bounds.max.y).map(move |y| {
+            let pos = Pos::new(x, y);
+            (pos, self.get(pos).unwrap())
+        })
+    }
+
+    pub fn iter_row(&self, y: i32) -> impl Iterator<Item = (Pos, &T)> {
+        (self.bounds.min.x..=self.bounds.max.x).map(move |x| {
+            let pos = Pos::new(x, y);
+            (pos, self.get(pos).unwrap())
+        })
+    }
 }
 
 impl<T: TileDisplay> Map<T> {
@@ -115,20 +137,6 @@ impl<T: TileDisplay> Map<T> {
 
     pub fn print(&self) {
         self.print_with(|tile, pos| tile.map_print(pos))
-    }
-
-    pub fn iter_column(&self, x: i32) -> impl Iterator<Item = (Pos, &T)> {
-        (self.bounds.min.y..=self.bounds.max.y).map(move |y| {
-            let pos = Pos::new(x, y);
-            (pos, self.get(pos).unwrap())
-        })
-    }
-
-    pub fn iter_row(&self, y: i32) -> impl Iterator<Item = (Pos, &T)> {
-        (self.bounds.min.x..=self.bounds.max.x).map(move |x| {
-            let pos = Pos::new(x, y);
-            (pos, self.get(pos).unwrap())
-        })
     }
 }
 
