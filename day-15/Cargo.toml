@@ -1,0 +1,15 @@
+[package]
+name = "day-15"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+itertools = "0.10.2"
+num = "0.4"
+lazy_static = "*"
+regex = "*"
+colored = "*"
+enum-iterator = "1.2.0"
+memoize = "0.4.1"
+runner = { path = "../runner" }
+toolkit = { path = "../toolkit" }
