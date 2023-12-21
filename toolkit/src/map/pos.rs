@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub};
+use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Pos {
@@ -41,6 +41,36 @@ impl Sub for Pos {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
         }
+    }
+}
+
+impl Mul<i32> for Pos {
+    type Output = Self;
+
+    fn mul(self, rhs: i32) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+        }
+    }
+}
+
+impl AddAssign for Pos {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
+    }
+}
+
+impl SubAssign for Pos {
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = *self - rhs;
+    }
+}
+
+impl MulAssign<i32> for Pos {
+    fn mul_assign(&mut self, rhs: i32) {
+        self.x *= rhs;
+        self.y *= rhs;
     }
 }
 
@@ -114,6 +144,43 @@ impl Pos {
             y: self.y,
         }
     }
+
+    pub fn opposite(&self) -> Self {
+        Self {
+            x: -self.x,
+            y: -self.y,
+        }
+    }
+
+    /**
+     * Rotates the position 90 degrees to the left
+     */
+    pub fn rotate_left(&self) -> Self {
+        Self {
+            x: self.y,
+            y: -self.x,
+        }
+    }
+
+    /**
+     * Rotates the position 90 degrees to the right
+     */
+    pub fn rotate_right(&self) -> Self {
+        Self {
+            x: -self.y,
+            y: self.x,
+        }
+    }
+
+    pub fn as_dir_str(&self) -> String {
+        match *self {
+            Self::UP => String::from("^"),
+            Self::DOWN => String::from("v"),
+            Self::LEFT => String::from("<"),
+            Self::RIGHT => String::from(">"),
+            _ => format!("{:?}", self),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -124,5 +191,17 @@ pub mod tests {
     fn test_additions() {
         assert_eq!(Pos::new(1, 1) + Pos::new(1, 1), Pos::new(2, 2));
         assert_eq!(Pos::new(1, 1) + Pos::new(-1, -1), Pos::new(0, 0));
+    }
+
+    #[test]
+    fn test_rotation() {
+        assert_eq!(Pos::UP.rotate_left(), Pos::LEFT);
+        assert_eq!(Pos::UP.rotate_right(), Pos::RIGHT);
+        assert_eq!(Pos::DOWN.rotate_left(), Pos::RIGHT);
+        assert_eq!(Pos::DOWN.rotate_right(), Pos::LEFT);
+        assert_eq!(Pos::LEFT.rotate_left(), Pos::DOWN);
+        assert_eq!(Pos::LEFT.rotate_right(), Pos::UP);
+        assert_eq!(Pos::RIGHT.rotate_left(), Pos::UP);
+        assert_eq!(Pos::RIGHT.rotate_right(), Pos::DOWN);
     }
 }
