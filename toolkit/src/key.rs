@@ -1,5 +1,9 @@
 use std::{fmt::Display, str::FromStr};
 
+/**
+ * Represents an ASCII string in its encoded form.
+ * Useful to avoid allocating strings when comparing keys.
+ */
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Key(u32);
 
